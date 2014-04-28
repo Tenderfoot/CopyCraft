@@ -15,7 +15,7 @@
 
 #include "common.h"
 
-#define WORLD_SIZE 10
+#define WORLD_SIZE 6
 
 t_levelBlock world[WORLD_SIZE][WORLD_SIZE][WORLD_SIZE];
 t_pos camera_pos;
@@ -149,107 +149,110 @@ int populate_verticies(float *vertex_buffer)
 		{
 			for(k=0; k<WORLD_SIZE; k++)
 			{
-				if(check_block_exists(i,j,k+1) == false)
+				if(world[i][j][k].type > 0)
 				{
-					vertex_buffer[current_face*12] = 0.5-i;
-					vertex_buffer[current_face*12+1] = 0.5-j;
-					vertex_buffer[current_face*12+2] = 0.5-k;
-					vertex_buffer[current_face*12+3] = -0.5-i;
-					vertex_buffer[current_face*12+4] = 0.5-j;
-					vertex_buffer[current_face*12+5] = 0.5-k;
-					vertex_buffer[current_face*12+6] = -0.5-i;
-					vertex_buffer[current_face*12+7] = -0.5-j;
-					vertex_buffer[current_face*12+8] = 0.5-k;
-					vertex_buffer[current_face*12+9] = 0.5-i;
-					vertex_buffer[current_face*12+10] = -0.5-j;
-					vertex_buffer[current_face*12+11] = 0.5-k;
-					current_face++;
-				}
+					if(check_block_exists(i,j,k+1) == false)
+					{
+						vertex_buffer[current_face*12] = 0.5+i;
+						vertex_buffer[current_face*12+1] = 0.5+j;
+						vertex_buffer[current_face*12+2] = 0.5+k;
+						vertex_buffer[current_face*12+3] = -0.5+i;
+						vertex_buffer[current_face*12+4] = 0.5+j;
+						vertex_buffer[current_face*12+5] = 0.5+k;
+						vertex_buffer[current_face*12+6] = -0.5+i;
+						vertex_buffer[current_face*12+7] = -0.5+j;
+						vertex_buffer[current_face*12+8] = 0.5+k;
+						vertex_buffer[current_face*12+9] = 0.5+i;
+						vertex_buffer[current_face*12+10] = -0.5+j;
+						vertex_buffer[current_face*12+11] = 0.5+k;
+						current_face++;
+					}
 
-				if(check_block_exists(i,j,k-1) == false)
-				{
-					vertex_buffer[current_face*12] = 0.5-i;
-					vertex_buffer[current_face*12+1] = 0.5-j;
-					vertex_buffer[current_face*12+2] = -0.5-k;
-					vertex_buffer[current_face*12+3] = -0.5-i;
-					vertex_buffer[current_face*12+4] = 0.5-j;
-					vertex_buffer[current_face*12+5] = -0.5-k;
-					vertex_buffer[current_face*12+6] = -0.5-i;
-					vertex_buffer[current_face*12+7] = -0.5-j;
-					vertex_buffer[current_face*12+8] = -0.5-k;
-					vertex_buffer[current_face*12+9] = 0.5-i;
-					vertex_buffer[current_face*12+10] = -0.5-j;
-					vertex_buffer[current_face*12+11] = -0.5-k;
-					current_face++;
-				}
+					if(check_block_exists(i,j,k-1) == false)
+					{
+						vertex_buffer[current_face*12] = 0.5+i;
+						vertex_buffer[current_face*12+1] = 0.5+j;
+						vertex_buffer[current_face*12+2] = -0.5+k;
+						vertex_buffer[current_face*12+3] = -0.5+i;
+						vertex_buffer[current_face*12+4] = 0.5+j;
+						vertex_buffer[current_face*12+5] = -0.5+k;
+						vertex_buffer[current_face*12+6] = -0.5+i;
+						vertex_buffer[current_face*12+7] = -0.5+j;
+						vertex_buffer[current_face*12+8] = -0.5+k;
+						vertex_buffer[current_face*12+9] = 0.5+i;
+						vertex_buffer[current_face*12+10] = -0.5+j;
+						vertex_buffer[current_face*12+11] = -0.5+k;
+						current_face++;
+					}
 
-				if(check_block_exists(i,j-1,k) == false)
-				{
-					vertex_buffer[current_face*12] = 0.5-i;
-					vertex_buffer[current_face*12+1] = -0.5-j;
-					vertex_buffer[current_face*12+2] = 0.5-k;
-					vertex_buffer[current_face*12+3] = -0.5-i;
-					vertex_buffer[current_face*12+4] = -0.5-j;
-					vertex_buffer[current_face*12+5] = 0.5-k;
-					vertex_buffer[current_face*12+6] = -0.5-i;
-					vertex_buffer[current_face*12+7] = -0.5-j;
-					vertex_buffer[current_face*12+8] = -0.5-k;
-					vertex_buffer[current_face*12+9] = 0.5-i;
-					vertex_buffer[current_face*12+10] = -0.5-j;
-					vertex_buffer[current_face*12+11] = -0.5-k;
-					current_face++;
-				}
+					if(check_block_exists(i,j-1,k) == false)
+					{
+						vertex_buffer[current_face*12] = 0.5+i;
+						vertex_buffer[current_face*12+1] = -0.5+j;
+						vertex_buffer[current_face*12+2] = 0.5+k;
+						vertex_buffer[current_face*12+3] = -0.5+i;
+						vertex_buffer[current_face*12+4] = -0.5+j;
+						vertex_buffer[current_face*12+5] = 0.5+k;
+						vertex_buffer[current_face*12+6] = -0.5+i;
+						vertex_buffer[current_face*12+7] = -0.5+j;
+						vertex_buffer[current_face*12+8] = -0.5+k;
+						vertex_buffer[current_face*12+9] = 0.5+i;
+						vertex_buffer[current_face*12+10] = -0.5+j;
+						vertex_buffer[current_face*12+11] = -0.5+k;
+						current_face++;
+					}
 
-				if(check_block_exists(i,j+1,k) == false)
-				{
+					if(check_block_exists(i,j+1,k) == false)
+					{
 
-					vertex_buffer[current_face*12] = 0.5-i;
-					vertex_buffer[current_face*12+1] = 0.5-j;
-					vertex_buffer[current_face*12+2] = 0.5-k;
-					vertex_buffer[current_face*12+3] = -0.5-i;
-					vertex_buffer[current_face*12+4] = 0.5-j;
-					vertex_buffer[current_face*12+5] = 0.5-k;
-					vertex_buffer[current_face*12+6] = -0.5-i;
-					vertex_buffer[current_face*12+7] = 0.5-j;
-					vertex_buffer[current_face*12+8] = -0.5-k;
-					vertex_buffer[current_face*12+9] = 0.5-i;
-					vertex_buffer[current_face*12+10] = 0.5-j;
-					vertex_buffer[current_face*12+11] = -0.5-k;
-					current_face++;
-				}
+						vertex_buffer[current_face*12] = 0.5+i;
+						vertex_buffer[current_face*12+1] = 0.5+j;
+						vertex_buffer[current_face*12+2] = 0.5+k;
+						vertex_buffer[current_face*12+3] = -0.5+i;
+						vertex_buffer[current_face*12+4] = 0.5+j;
+						vertex_buffer[current_face*12+5] = 0.5+k;
+						vertex_buffer[current_face*12+6] = -0.5+i;
+						vertex_buffer[current_face*12+7] = 0.5+j;
+						vertex_buffer[current_face*12+8] = -0.5+k;
+						vertex_buffer[current_face*12+9] = 0.5+i;
+						vertex_buffer[current_face*12+10] = 0.5+j;
+						vertex_buffer[current_face*12+11] = -0.5+k;
+						current_face++;
+					}
 
-				if(check_block_exists(i-1,j,k) == false)
-				{
-					vertex_buffer[current_face*12] = -0.5-i;
-					vertex_buffer[current_face*12+1] = 0.5-j;
-					vertex_buffer[current_face*12+2] = 0.5-k;
-					vertex_buffer[current_face*12+3] = -0.5-i;
-					vertex_buffer[current_face*12+4] = -0.5-j;
-					vertex_buffer[current_face*12+5] = 0.5-k;
-					vertex_buffer[current_face*12+6] = -0.5-i;
-					vertex_buffer[current_face*12+7] = -0.5-j;
-					vertex_buffer[current_face*12+8] = -0.5-k;
-					vertex_buffer[current_face*12+9] = -0.5-i;
-					vertex_buffer[current_face*12+10] = 0.5-j;
-					vertex_buffer[current_face*12+11] = -0.5-k;
-					current_face++;
-				}
+					if(check_block_exists(i-1,j,k) == false)
+					{
+						vertex_buffer[current_face*12] = -0.5+i;
+						vertex_buffer[current_face*12+1] = 0.5+j;
+						vertex_buffer[current_face*12+2] = 0.5+k;
+						vertex_buffer[current_face*12+3] = -0.5+i;
+						vertex_buffer[current_face*12+4] = -0.5+j;
+						vertex_buffer[current_face*12+5] = 0.5+k;
+						vertex_buffer[current_face*12+6] = -0.5+i;
+						vertex_buffer[current_face*12+7] = -0.5+j;
+						vertex_buffer[current_face*12+8] = -0.5+k;
+						vertex_buffer[current_face*12+9] = -0.5+i;
+						vertex_buffer[current_face*12+10] = 0.5+j;
+						vertex_buffer[current_face*12+11] = -0.5+k;
+						current_face++;
+					}
 
-				if(check_block_exists(i+1,j,k) == false)
-				{
-					vertex_buffer[current_face*12] = 0.5-i;
-					vertex_buffer[current_face*12+1] = 0.5-j;
-					vertex_buffer[current_face*12+2] = 0.5-k;
-					vertex_buffer[current_face*12+3] = 0.5-i;
-					vertex_buffer[current_face*12+4] = -0.5-j;
-					vertex_buffer[current_face*12+5] = 0.5-k;
-					vertex_buffer[current_face*12+6] = 0.5-i;
-					vertex_buffer[current_face*12+7] = -0.5-j;
-					vertex_buffer[current_face*12+8] = -0.5-k;
-					vertex_buffer[current_face*12+9] = 0.5-i;
-					vertex_buffer[current_face*12+10] = 0.5-j;
-					vertex_buffer[current_face*12+11] = -0.5-k;
-					current_face++;
+					if(check_block_exists(i+1,j,k) == false)
+					{
+						vertex_buffer[current_face*12] = 0.5+i;
+						vertex_buffer[current_face*12+1] = 0.5+j;
+						vertex_buffer[current_face*12+2] = 0.5+k;
+						vertex_buffer[current_face*12+3] = 0.5+i;
+						vertex_buffer[current_face*12+4] = -0.5+j;
+						vertex_buffer[current_face*12+5] = 0.5+k;
+						vertex_buffer[current_face*12+6] = 0.5+i;
+						vertex_buffer[current_face*12+7] = -0.5+j;
+						vertex_buffer[current_face*12+8] = -0.5+k;
+						vertex_buffer[current_face*12+9] = 0.5+i;
+						vertex_buffer[current_face*12+10] = 0.5+j;
+						vertex_buffer[current_face*12+11] = -0.5+k;
+						current_face++;
+					}
 				}
 			}
 		}
@@ -412,6 +415,13 @@ int main(int argc, char *argv[])
 
 	printf("Number of faces populated: %d\n", num_faces_populated);
 
+	//Create a new VBO and use the variable id to store the VBO id
+	glGenBuffers(1, &triangleVBO);
+	//Make the new VBO active
+	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
+	//Upload vertex data to the video device
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_faces_populated*4*3, verticies, GL_STATIC_DRAW);
+
 	while(!done)
 	{
 		while(SDL_PollEvent(&event))
@@ -434,17 +444,6 @@ int main(int argc, char *argv[])
 
 		rot_amount = SDL_GetTicks()/10;
  
-		//Vertices of a triangle (counter-clockwise winding)
- 
-		//Create a new VBO and use the variable id to store the VBO id
-		glGenBuffers(1, &triangleVBO);
- 
-		//Make the new VBO active
-		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
- 
-		//Upload vertex data to the video device
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_faces_populated*4*3, verticies, GL_STATIC_DRAW);
- 
 		//Make the new VBO active. Repeat here incase changed since initialisation
 		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
  
@@ -455,7 +454,6 @@ int main(int argc, char *argv[])
 		//Establish array contains vertices (not normals, colours, texture coords etc)
 		glEnableClientState(GL_VERTEX_ARRAY);
  
-
 		glPushMatrix();
 			glTranslatef(-10.0f,-10.0f,0.0f);
 			glRotatef(rot_amount,1,1,0);
