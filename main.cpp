@@ -47,7 +47,7 @@ void init()
 		{
 			while(found == false)
 			{
-				if(world[i][current_depth][k].type == 0 && current_depth<32)
+				if(world[i][current_depth][k].type == 0 && current_depth<WORLD_SIZE)
 					current_depth--;
 				else
 				{
@@ -177,10 +177,6 @@ int main(int argc, char *argv[])
 	
 	SDL_GLContext glcontext = SDL_GL_CreateContext(window);
 
-	glMatrixMode(GL_PROJECTION|GL_MODELVIEW);
-	glLoadIdentity();
-	glOrtho(-320,320,240,-240,0,1);
-
 	init_opengl();
 
 	init();
@@ -189,6 +185,32 @@ int main(int argc, char *argv[])
 
 	SDL_Event event; 
 	bool done = 0;
+
+	int i,j,k;
+	float rot_amount;
+	
+	GLuint world_display_list = glGenLists (1);
+	glNewList(world_display_list, GL_COMPILE);
+	for(i=0; i<WORLD_SIZE; i++)
+	{
+		for(j=0; j<WORLD_SIZE; j++)
+		{
+			for(k=0; k<WORLD_SIZE; k++)
+			{
+				if(world[i][j][k].type > 0)
+				{
+					glPushMatrix();
+						//glTranslatef(i*1.5,j*1.5,k*1.5);
+						glTranslatef(i-16,j-16,k-16);
+						draw_cube(i,j,k);
+					glPopMatrix();
+				}
+			}
+		}
+	}
+
+	glEndList();
+
 	while(!done)
 	{
 		while(SDL_PollEvent(&event))
@@ -207,29 +229,13 @@ int main(int argc, char *argv[])
 		glClearColor(0,0,0,1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		gluLookAt(0.0f,0.0f, 50.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
-		
-		int i,j,k;
-		float rot_amount;
+		gluLookAt(0.0f,0.0f, 100.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
-		glTranslatef(-16,-48,-16);
-		for(i=0; i<WORLD_SIZE; i++)
-		{
-			for(j=0; j<WORLD_SIZE; j++)
-			{
-				for(k=0; k<WORLD_SIZE; k++)
-				{
-					if(world[i][j][k].type > 0)
-					{
-						glPushMatrix();
-							//glTranslatef(i*1.5,j*1.5,k*1.5);
-							glTranslatef(i,j,k);
-							draw_cube(i,j,k);
-						glPopMatrix();
-					}
-				}
-			}
-		}
+		glTranslatef(0,-32,0);
+		rot_amount = SDL_GetTicks()/10;
+		glRotatef(rot_amount, 1, 0, 1);
+
+		glCallList(world_display_list);
 
 		SDL_GL_SwapWindow(window);
     
