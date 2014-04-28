@@ -15,7 +15,7 @@
 
 #include "common.h"
 
-#define WORLD_SIZE 1
+#define WORLD_SIZE 10
 
 t_levelBlock world[WORLD_SIZE][WORLD_SIZE][WORLD_SIZE];
 t_pos camera_pos;
@@ -41,7 +41,7 @@ void init()
 			for(k=0; k<WORLD_SIZE; k++)
 			{
 				block_type =  rand() % 50;
-				if(block_type>0)	
+				if(block_type>10)	
 					world[i][j][k].type = DIRT;
 				else
 					world[i][j][k].type = NO_BLOCK;
@@ -391,7 +391,7 @@ int main(int argc, char *argv[])
 				{
 					glPushMatrix();
 						//glTranslatef(i*1.5,j*1.5,k*1.5);
-						glTranslatef(i-16,j-16,k-16);
+						glTranslatef(i,j,k);
 						draw_cube(i,j,k);
 					glPopMatrix();
 				}
@@ -412,8 +412,6 @@ int main(int argc, char *argv[])
 
 	printf("Number of faces populated: %d\n", num_faces_populated);
 
-	glShadeModel(GL_FLAT);
-
 	while(!done)
 	{
 		while(SDL_PollEvent(&event))
@@ -432,7 +430,7 @@ int main(int argc, char *argv[])
 		glClearColor(0,0,0,1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		gluLookAt(0.0f,10.0f, 10.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+		gluLookAt(0.0f,0.0f, 50.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
 		rot_amount = SDL_GetTicks()/10;
  
@@ -458,9 +456,18 @@ int main(int argc, char *argv[])
 		glEnableClientState(GL_VERTEX_ARRAY);
  
 
-		glRotatef(rot_amount,1,1,0);
-		//Actually draw the triangle, giving the number of vertices provided
-		glDrawArrays(GL_QUADS, 0, num_faces_populated*4);
+		glPushMatrix();
+			glTranslatef(-10.0f,-10.0f,0.0f);
+			glRotatef(rot_amount,1,1,0);
+			//Actually draw the triangle, giving the number of vertices provided
+			glDrawArrays(GL_QUADS, 0, num_faces_populated*4);
+		glPopMatrix();
+
+		glPushMatrix();
+			glTranslatef(10.0f,-10.0f,0.0f);
+			glRotatef(rot_amount,1,1,0);
+			glCallList(world_display_list);
+		glPopMatrix();
 
 		SDL_GL_SwapWindow(window);
     
