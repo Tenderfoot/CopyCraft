@@ -15,7 +15,7 @@
 
 #include "common.h"
 
-#define WORLD_SIZE 6
+#define WORLD_SIZE 8
 
 t_levelBlock world[WORLD_SIZE][WORLD_SIZE][WORLD_SIZE];
 t_pos camera_pos;
@@ -41,7 +41,7 @@ void init()
 			for(k=0; k<WORLD_SIZE; k++)
 			{
 				block_type =  rand() % 50;
-				if(block_type>10)	
+				if(block_type>30)	
 					world[i][j][k].type = DIRT;
 				else
 					world[i][j][k].type = NO_BLOCK;
@@ -381,28 +381,6 @@ int main(int argc, char *argv[])
 
 	int i,j,k;
 	float rot_amount;
-	
-	GLuint world_display_list = glGenLists (1);
-	glNewList(world_display_list, GL_COMPILE);
-	for(i=0; i<WORLD_SIZE; i++)
-	{
-		for(j=0; j<WORLD_SIZE; j++)
-		{
-			for(k=0; k<WORLD_SIZE; k++)
-			{
-				if(world[i][j][k].type > 0)
-				{
-					glPushMatrix();
-						//glTranslatef(i*1.5,j*1.5,k*1.5);
-						glTranslatef(i,j,k);
-						draw_cube(i,j,k);
-					glPopMatrix();
-				}
-			}
-		}
-	}
-
-	glEndList();
 
 	//Initialise VBO - do only once, at start of program
 	//Create a variable to hold the VBO identifier
@@ -455,17 +433,11 @@ int main(int argc, char *argv[])
 		glEnableClientState(GL_VERTEX_ARRAY);
  
 		glPushMatrix();
-			glTranslatef(-10.0f,-10.0f,0.0f);
 			glRotatef(rot_amount,1,1,0);
 			//Actually draw the triangle, giving the number of vertices provided
 			glDrawArrays(GL_QUADS, 0, num_faces_populated*4);
 		glPopMatrix();
 
-		glPushMatrix();
-			glTranslatef(10.0f,-10.0f,0.0f);
-			glRotatef(rot_amount,1,1,0);
-			glCallList(world_display_list);
-		glPopMatrix();
 
 		SDL_GL_SwapWindow(window);
     
