@@ -12,7 +12,9 @@
 
 #include "common.h"
 
-t_levelBlock world[32][32][32];
+#define WORLD_SIZE 32
+
+t_levelBlock world[WORLD_SIZE][WORLD_SIZE][WORLD_SIZE];
 
 void init()
 {
@@ -21,26 +23,51 @@ void init()
 	srand (time(NULL));
 	int block_type = 0;
 
-	for(i=0; i<32; i++)
+	for(i=0; i<WORLD_SIZE; i++)
 	{
-		for(j=0; j<32; j++)
+		for(j=0; j<WORLD_SIZE; j++)
 		{
-			for(k=0; k<32; k++)
+			for(k=0; k<WORLD_SIZE; k++)
 			{
 				block_type =  rand() % 50;
-				world[i][j][k].type = (block_type>25);
+				if(block_type>10)	
+					world[i][j][k].type = DIRT;
+				else
+					world[i][j][k].type = NO_BLOCK;
 			}
+		}
+	}
+
+	int current_depth = WORLD_SIZE-1;
+	bool found=false;
+	// next set topsoil.
+	for(i=0; i<WORLD_SIZE; i++)
+	{
+		for(k=0; k<WORLD_SIZE; k++)
+		{
+			while(found == false)
+			{
+				if(world[i][current_depth][k].type == 0 && current_depth<32)
+					current_depth--;
+				else
+				{
+					found = true;
+					world[i][current_depth][k].type = TOPSOIL;
+				}
+			}
+			found = false;
+			current_depth=WORLD_SIZE-1;
 		}
 	}
 }
 
 bool check_block_exists(int i, int j, int k)
 {
-	if(i>31 || i<0 || j>31 || j<0 || k>31 || k<0) 
+	if(i>WORLD_SIZE-1 || i<0 || j>WORLD_SIZE-1 || j<0 || k>WORLD_SIZE-1 || k<0) 
 		return false;
 	else
 	{
-		return  world[i][j][k].type == 1;
+		return  world[i][j][k].type > 0;
 	}
 }
 
@@ -53,8 +80,15 @@ void draw_cube(int i, int j, int k)
 	// adjacent on that side
 
 	glBegin(GL_QUADS);
-			
-		glColor3f(1.0f,1.0f,1.0f);
+		
+		if(world[i][j][k].type == DIRT)
+		{
+			glColor3f(1.0f,0.5f,0.1f);
+		}
+		else if(world[i][j][k].type == TOPSOIL)
+		{
+			glColor3f(0.0f,0.8f,0.0f);
+		}		
 
 		if(check_block_exists(i,j,k+1) == false)
 		{
@@ -68,7 +102,6 @@ void draw_cube(int i, int j, int k)
 		if(check_block_exists(i,j,k-1) == false)
 		{
 			//back
-			glColor3f(1.0f,0.0f,1.0f);
 			glVertex3f(0.5f,0.5f,-0.5f);
 			glVertex3f(-0.5f,0.5f,-0.5f);
 			glVertex3f(-0.5f,-0.5f,-0.5f);
@@ -78,7 +111,6 @@ void draw_cube(int i, int j, int k)
 		if(check_block_exists(i,j-1,k) == false)
 		{
 			//top
-			glColor3f(0.0f,0.0f,1.0f);
 			glVertex3f(0.5f,-0.5f,0.5f);
 			glVertex3f(-0.5f,-0.5f,0.5f);
 			glVertex3f(-0.5f,-0.5f,-0.5f);
@@ -88,7 +120,6 @@ void draw_cube(int i, int j, int k)
 		if(check_block_exists(i,j+1,k) == false)
 		{
 			//bottom
-			glColor3f(0.0f,1.0f,1.0f);
 			glVertex3f(0.5f,0.5f,0.5f);
 			glVertex3f(-0.5f,0.5f,0.5f);
 			glVertex3f(-0.5f,0.5f,-0.5f);
@@ -98,7 +129,6 @@ void draw_cube(int i, int j, int k)
 		if(check_block_exists(i-1,j,k) == false)
 		{
 			//left
-			glColor3f(1.0f,0.0f,1.0f);
 			glVertex3f(-0.5f,0.5f,0.5f);
 			glVertex3f(-0.5f,-0.5f,0.5f);
 			glVertex3f(-0.5f,-0.5f,-0.5f);
@@ -108,7 +138,6 @@ void draw_cube(int i, int j, int k)
 		if(check_block_exists(i+1,j,k) == false)
 		{
 			//right
-			glColor3f(0.0f,1.0f,1.0f);
 			glVertex3f(0.5f,0.5f,0.5f);
 			glVertex3f(0.5f,-0.5f,0.5f);
 			glVertex3f(0.5f,-0.5f,-0.5f);
@@ -183,16 +212,14 @@ int main(int argc, char *argv[])
 		int i,j,k;
 		float rot_amount;
 
-		glTranslatef(-16,-16,-16);
-		rot_amount = ((float)SDL_GetTicks())/10;
-		glRotatef(rot_amount,0,1,1);
-		for(i=0; i<32; i++)
+		glTranslatef(-16,-48,-16);
+		for(i=0; i<WORLD_SIZE; i++)
 		{
-			for(j=0; j<32; j++)
+			for(j=0; j<WORLD_SIZE; j++)
 			{
-				for(k=0; k<32; k++)
+				for(k=0; k<WORLD_SIZE; k++)
 				{
-					if(world[i][j][k].type == 1)
+					if(world[i][j][k].type > 0)
 					{
 						glPushMatrix();
 							//glTranslatef(i*1.5,j*1.5,k*1.5);
