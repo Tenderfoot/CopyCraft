@@ -8,47 +8,96 @@
 #include <SDL_opengl.h>
 #include <gl/GLU.h>
 
-void draw_cube()
+#include "common.h"
+
+t_levelBlock world[32][32][32];
+
+void init()
+{
+	int i, j, k;
+
+	for(i=0; i<32; i++)
+	{
+		for(j=0; j<32; j++)
+		{
+			for(k=0; k<32; k++)
+			{
+				world[i][j][k].type = 1;
+			}
+		}
+	}
+}
+
+void draw_cube(int i, int j, int k)
 {
 	glBindTexture(GL_TEXTURE_2D, NULL);
 
+	// draw different faces of the cube
+	// only if there isn't another cube
+	// adjacent on that side
+
 	glBegin(GL_QUADS);
 			
-		glColor3f(1.0f,0.0f,0.0f);
-		glVertex3f(1.0f,1.0f,1.0f);
-		glVertex3f(-1.0f,1.0f,1.0f);
-		glVertex3f(-1.0f,-1.0f,1.0f);
-		glVertex3f(1.0f,-1.0f,1.0f);
+		glColor3f(1.0f,1.0f,1.0f);
 
-		glColor3f(0.0f,1.0f,0.0f);
-		glVertex3f(1.0f,1.0f,-1.0f);
-		glVertex3f(-1.0f,1.0f,-1.0f);
-		glVertex3f(-1.0f,-1.0f,-1.0f);
-		glVertex3f(1.0f,-1.0f,-1.0f);
+		if(k==31)
+		{
+			//front
+			glVertex3f(0.5f,0.5f,0.5f);
+			glVertex3f(-0.5f,0.5f,0.5f);
+			glVertex3f(-0.5f,-0.5f,0.5f);
+			glVertex3f(0.5f,-0.5f,0.5f);
+		}
 
-		glColor3f(0.0f,0.0f,1.0f);
-		glVertex3f(1.0f,-1.0f,1.0f);
-		glVertex3f(-1.0f,-1.0f,1.0f);
-		glVertex3f(-1.0f,-1.0f,-1.0f);
-		glVertex3f(1.0f,-1.0f,-1.0f);
+		if(k==0)
+		{
+			//back
+			glColor3f(1.0f,0.0f,1.0f);
+			glVertex3f(0.5f,0.5f,-0.5f);
+			glVertex3f(-0.5f,0.5f,-0.5f);
+			glVertex3f(-0.5f,-0.5f,-0.5f);
+			glVertex3f(0.5f,-0.5f,-0.5f);
+		}
 
-		glColor3f(1.0f,1.0f,0.0f);
-		glVertex3f(1.0f,1.0f,1.0f);
-		glVertex3f(-1.0f,1.0f,1.0f);
-		glVertex3f(-1.0f,1.0f,-1.0f);
-		glVertex3f(1.0f,1.0f,-1.0f);
+		if(j==0)
+		{
+			//bottom
+			glColor3f(0.0f,0.0f,1.0f);
+			glVertex3f(0.5f,-0.5f,0.5f);
+			glVertex3f(-0.5f,-0.5f,0.5f);
+			glVertex3f(-0.5f,-0.5f,-0.5f);
+			glVertex3f(0.5f,-0.5f,-0.5f);
+		}
 
-		glColor3f(1.0f,0.0f,1.0f);
-		glVertex3f(-1.0f,1.0f,1.0f);
-		glVertex3f(-1.0f,-1.0f,1.0f);
-		glVertex3f(-1.0f,-1.0f,-1.0f);
-		glVertex3f(-1.0f,1.0f,-1.0f);
+		if(j==31)
+		{
+			//top
+			glColor3f(0.0f,1.0f,1.0f);
+			glVertex3f(0.5f,0.5f,0.5f);
+			glVertex3f(-0.5f,0.5f,0.5f);
+			glVertex3f(-0.5f,0.5f,-0.5f);
+			glVertex3f(0.5f,0.5f,-0.5f);
+		}
 
-		glColor3f(0.0f,1.0f,1.0f);
-		glVertex3f(1.0f,1.0f,1.0f);
-		glVertex3f(1.0f,-1.0f,1.0f);
-		glVertex3f(1.0f,-1.0f,-1.0f);
-		glVertex3f(1.0f,1.0f,-1.0f);
+		if(i==0)
+		{
+			//left
+			glColor3f(1.0f,0.0f,1.0f);
+			glVertex3f(-0.5f,0.5f,0.5f);
+			glVertex3f(-0.5f,-0.5f,0.5f);
+			glVertex3f(-0.5f,-0.5f,-0.5f);
+			glVertex3f(-0.5f,0.5f,-0.5f);
+		}
+
+		if(i==31)
+		{
+			//right
+			glColor3f(0.0f,1.0f,1.0f);
+			glVertex3f(0.5f,0.5f,0.5f);
+			glVertex3f(0.5f,-0.5f,0.5f);
+			glVertex3f(0.5f,-0.5f,-0.5f);
+			glVertex3f(0.5f,0.5f,-0.5f);
+		}
 	glEnd();
 
 	glColor3f(1.0f,1.0f,1.0f);
@@ -101,7 +150,7 @@ int main(int argc, char *argv[])
 				done = 1;
 		}
 		
-		// redner scene
+		// render scene
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		gluPerspective ( 80, ( float )1024 / ( float ) 768, 1.0, 100000.0 );
@@ -113,7 +162,22 @@ int main(int argc, char *argv[])
 		
 		gluLookAt(0.0f,0.0f, 50.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 		
-		draw_cube();
+		int i,j,k;
+
+		glTranslatef(-16,-16,-16);
+		for(i=0; i<32; i++)
+		{
+			for(j=0; j<32; j++)
+			{
+				for(k=0; k<32; k++)
+				{
+					glPushMatrix();
+						glTranslatef(i,j,k);
+						draw_cube(i,j,k);
+					glPopMatrix();
+				}
+			}
+		}
 
 		SDL_GL_SwapWindow(window);
     
