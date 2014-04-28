@@ -4,6 +4,8 @@
 #pragma comment(lib, "OpenGL32")
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <gl/GLU.h>
@@ -16,15 +18,29 @@ void init()
 {
 	int i, j, k;
 
+	srand (time(NULL));
+	int block_type = 0;
+
 	for(i=0; i<32; i++)
 	{
 		for(j=0; j<32; j++)
 		{
 			for(k=0; k<32; k++)
 			{
-				world[i][j][k].type = 1;
+				block_type =  rand() % 50;
+				world[i][j][k].type = (block_type>25);
 			}
 		}
+	}
+}
+
+bool check_block_exists(int i, int j, int k)
+{
+	if(i>31 || i<0 || j>31 || j<0 || k>31 || k<0) 
+		return false;
+	else
+	{
+		return  world[i][j][k].type == 1;
 	}
 }
 
@@ -40,7 +56,7 @@ void draw_cube(int i, int j, int k)
 			
 		glColor3f(1.0f,1.0f,1.0f);
 
-		if(k==31)
+		if(check_block_exists(i,j,k+1) == false)
 		{
 			//front
 			glVertex3f(0.5f,0.5f,0.5f);
@@ -49,7 +65,7 @@ void draw_cube(int i, int j, int k)
 			glVertex3f(0.5f,-0.5f,0.5f);
 		}
 
-		if(k==0)
+		if(check_block_exists(i,j,k-1) == false)
 		{
 			//back
 			glColor3f(1.0f,0.0f,1.0f);
@@ -59,9 +75,9 @@ void draw_cube(int i, int j, int k)
 			glVertex3f(0.5f,-0.5f,-0.5f);
 		}
 
-		if(j==0)
+		if(check_block_exists(i,j-1,k) == false)
 		{
-			//bottom
+			//top
 			glColor3f(0.0f,0.0f,1.0f);
 			glVertex3f(0.5f,-0.5f,0.5f);
 			glVertex3f(-0.5f,-0.5f,0.5f);
@@ -69,9 +85,9 @@ void draw_cube(int i, int j, int k)
 			glVertex3f(0.5f,-0.5f,-0.5f);
 		}
 
-		if(j==31)
+		if(check_block_exists(i,j+1,k) == false)
 		{
-			//top
+			//bottom
 			glColor3f(0.0f,1.0f,1.0f);
 			glVertex3f(0.5f,0.5f,0.5f);
 			glVertex3f(-0.5f,0.5f,0.5f);
@@ -79,7 +95,7 @@ void draw_cube(int i, int j, int k)
 			glVertex3f(0.5f,0.5f,-0.5f);
 		}
 
-		if(i==0)
+		if(check_block_exists(i-1,j,k) == false)
 		{
 			//left
 			glColor3f(1.0f,0.0f,1.0f);
@@ -89,7 +105,7 @@ void draw_cube(int i, int j, int k)
 			glVertex3f(-0.5f,0.5f,-0.5f);
 		}
 
-		if(i==31)
+		if(check_block_exists(i+1,j,k) == false)
 		{
 			//right
 			glColor3f(0.0f,1.0f,1.0f);
@@ -138,6 +154,8 @@ int main(int argc, char *argv[])
 
 	init_opengl();
 
+	init();
+
 	float x = 0.0, y = 30.0;
 
 	SDL_Event event; 
@@ -163,18 +181,25 @@ int main(int argc, char *argv[])
 		gluLookAt(0.0f,0.0f, 50.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 		
 		int i,j,k;
+		float rot_amount;
 
 		glTranslatef(-16,-16,-16);
+		rot_amount = ((float)SDL_GetTicks())/10;
+		glRotatef(rot_amount,0,1,1);
 		for(i=0; i<32; i++)
 		{
 			for(j=0; j<32; j++)
 			{
 				for(k=0; k<32; k++)
 				{
-					glPushMatrix();
-						glTranslatef(i,j,k);
-						draw_cube(i,j,k);
-					glPopMatrix();
+					if(world[i][j][k].type == 1)
+					{
+						glPushMatrix();
+							//glTranslatef(i*1.5,j*1.5,k*1.5);
+							glTranslatef(i,j,k);
+							draw_cube(i,j,k);
+						glPopMatrix();
+					}
 				}
 			}
 		}
