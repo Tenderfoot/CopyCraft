@@ -2,12 +2,15 @@
 #pragma comment(lib, "SDL2main")
 #pragma comment(lib, "GLU32")
 #pragma comment(lib, "OpenGL32")
+#pragma comment(lib, "glew32")
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <gl/glew.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include <GL/GL.h>
 #include <gl/GLU.h>
 
 #include "common.h"
@@ -15,6 +18,9 @@
 #define WORLD_SIZE 32
 
 t_levelBlock world[WORLD_SIZE][WORLD_SIZE][WORLD_SIZE];
+
+// first get the size of the vertex array
+// then create and populate it
 
 void init()
 {
@@ -179,6 +185,8 @@ int main(int argc, char *argv[])
 
 	init_opengl();
 
+	glewInit();
+
 	init();
 
 	float x = 0.0, y = 30.0;
@@ -229,13 +237,42 @@ int main(int argc, char *argv[])
 		glClearColor(0,0,0,1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		gluLookAt(0.0f,0.0f, 100.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+		gluLookAt(0.0f,5.0f, 5.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
-		glTranslatef(0,-32,0);
 		rot_amount = SDL_GetTicks()/10;
-		glRotatef(rot_amount, 1, 0, 1);
 
-		glCallList(world_display_list);
+		//Initialise VBO - do only once, at start of program
+		//Create a variable to hold the VBO identifier
+		GLuint triangleVBO;
+ 
+		//Vertices of a triangle (counter-clockwise winding)
+		float data[] = {1.0, 0.0, 1.0, 0.0, 0.0, -1.0, -1.0, 0.0, 1.0};
+		//try float data[] = {0.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, -1.0, 0.0}; if the above doesn't work.
+ 
+		//Create a new VBO and use the variable id to store the VBO id
+		glGenBuffers(1, &triangleVBO);
+ 
+		//Make the new VBO active
+		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
+ 
+		//Upload vertex data to the video device
+		glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+ 
+		//Make the new VBO active. Repeat here incase changed since initialisation
+		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
+ 
+		//Draw Triangle from VBO - do each time window, view point or data changes
+		//Establish its 3 coordinates per vertex with zero stride in this array; necessary here
+		glVertexPointer(3, GL_FLOAT, 0, NULL);
+ 
+		//Establish array contains vertices (not normals, colours, texture coords etc)
+		glEnableClientState(GL_VERTEX_ARRAY);
+ 
+		//Actually draw the triangle, giving the number of vertices provided
+		glDrawArrays(GL_TRIANGLES, 0, sizeof(data) / sizeof(float) / 3);
+ 
+		//Force display to be drawn now
+		glFlush();
 
 		SDL_GL_SwapWindow(window);
     
