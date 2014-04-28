@@ -12,4 +12,9 @@ typedef struct
 	t_Block_Type type;
 }t_levelBlock;
 
+typedef struct
+{
+	float x,y,z;
+}t_pos;
+
 #endif;

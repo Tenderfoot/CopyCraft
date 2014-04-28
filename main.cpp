@@ -15,9 +15,10 @@
 
 #include "common.h"
 
-#define WORLD_SIZE 32
+#define WORLD_SIZE 1
 
 t_levelBlock world[WORLD_SIZE][WORLD_SIZE][WORLD_SIZE];
+t_pos camera_pos;
 
 // first get the size of the vertex array
 // then create and populate it
@@ -25,6 +26,10 @@ t_levelBlock world[WORLD_SIZE][WORLD_SIZE][WORLD_SIZE];
 void init()
 {
 	int i, j, k;
+
+	camera_pos.x = 0;
+	camera_pos.y = 0;
+	camera_pos.z = 5;
 
 	srand (time(NULL));
 	int block_type = 0;
@@ -36,7 +41,7 @@ void init()
 			for(k=0; k<WORLD_SIZE; k++)
 			{
 				block_type =  rand() % 50;
-				if(block_type>10)	
+				if(block_type>0)	
 					world[i][j][k].type = DIRT;
 				else
 					world[i][j][k].type = NO_BLOCK;
@@ -75,6 +80,181 @@ bool check_block_exists(int i, int j, int k)
 	{
 		return  world[i][j][k].type > 0;
 	}
+}
+
+int get_number_of_faces(int i, int j, int k)
+{
+	int number_to_return = 0;
+	
+	if(check_block_exists(i,j,k+1) == false)
+	{
+		number_to_return++;
+	}
+
+	if(check_block_exists(i,j,k-1) == false)
+	{
+		number_to_return++;
+	}
+
+	if(check_block_exists(i,j-1,k) == false)
+	{
+		number_to_return++;
+	}
+
+	if(check_block_exists(i,j+1,k) == false)
+	{
+		number_to_return++;
+	}
+
+	if(check_block_exists(i-1,j,k) == false)
+	{
+		number_to_return++;
+	}
+
+	if(check_block_exists(i+1,j,k) == false)
+	{
+		number_to_return++;
+	}
+
+	return number_to_return;
+}
+
+int get_total_faces()
+{
+	int i,j,k;
+	int total=0;
+
+	for(i=0; i<WORLD_SIZE; i++)
+	{
+		for(j=0; j<WORLD_SIZE; j++)
+		{
+			for(k=0; k<WORLD_SIZE; k++)
+			{
+				total+=get_number_of_faces(i,j,k);
+			}
+		}
+	}
+	return total;
+}
+
+int populate_verticies(float *vertex_buffer)
+{
+	int i,j,k;
+	int total=0;
+	int current_face = 0;
+
+	for(i=0; i<WORLD_SIZE; i++)
+	{
+		for(j=0; j<WORLD_SIZE; j++)
+		{
+			for(k=0; k<WORLD_SIZE; k++)
+			{
+				if(check_block_exists(i,j,k+1) == false)
+				{
+					vertex_buffer[current_face*12] = 0.5-i;
+					vertex_buffer[current_face*12+1] = 0.5-j;
+					vertex_buffer[current_face*12+2] = 0.5-k;
+					vertex_buffer[current_face*12+3] = -0.5-i;
+					vertex_buffer[current_face*12+4] = 0.5-j;
+					vertex_buffer[current_face*12+5] = 0.5-k;
+					vertex_buffer[current_face*12+6] = -0.5-i;
+					vertex_buffer[current_face*12+7] = -0.5-j;
+					vertex_buffer[current_face*12+8] = 0.5-k;
+					vertex_buffer[current_face*12+9] = 0.5-i;
+					vertex_buffer[current_face*12+10] = -0.5-j;
+					vertex_buffer[current_face*12+11] = 0.5-k;
+					current_face++;
+				}
+
+				if(check_block_exists(i,j,k-1) == false)
+				{
+					vertex_buffer[current_face*12] = 0.5-i;
+					vertex_buffer[current_face*12+1] = 0.5-j;
+					vertex_buffer[current_face*12+2] = -0.5-k;
+					vertex_buffer[current_face*12+3] = -0.5-i;
+					vertex_buffer[current_face*12+4] = 0.5-j;
+					vertex_buffer[current_face*12+5] = -0.5-k;
+					vertex_buffer[current_face*12+6] = -0.5-i;
+					vertex_buffer[current_face*12+7] = -0.5-j;
+					vertex_buffer[current_face*12+8] = -0.5-k;
+					vertex_buffer[current_face*12+9] = 0.5-i;
+					vertex_buffer[current_face*12+10] = -0.5-j;
+					vertex_buffer[current_face*12+11] = -0.5-k;
+					current_face++;
+				}
+
+				if(check_block_exists(i,j-1,k) == false)
+				{
+					vertex_buffer[current_face*12] = 0.5-i;
+					vertex_buffer[current_face*12+1] = -0.5-j;
+					vertex_buffer[current_face*12+2] = 0.5-k;
+					vertex_buffer[current_face*12+3] = -0.5-i;
+					vertex_buffer[current_face*12+4] = -0.5-j;
+					vertex_buffer[current_face*12+5] = 0.5-k;
+					vertex_buffer[current_face*12+6] = -0.5-i;
+					vertex_buffer[current_face*12+7] = -0.5-j;
+					vertex_buffer[current_face*12+8] = -0.5-k;
+					vertex_buffer[current_face*12+9] = 0.5-i;
+					vertex_buffer[current_face*12+10] = -0.5-j;
+					vertex_buffer[current_face*12+11] = -0.5-k;
+					current_face++;
+				}
+
+				if(check_block_exists(i,j+1,k) == false)
+				{
+
+					vertex_buffer[current_face*12] = 0.5-i;
+					vertex_buffer[current_face*12+1] = 0.5-j;
+					vertex_buffer[current_face*12+2] = 0.5-k;
+					vertex_buffer[current_face*12+3] = -0.5-i;
+					vertex_buffer[current_face*12+4] = 0.5-j;
+					vertex_buffer[current_face*12+5] = 0.5-k;
+					vertex_buffer[current_face*12+6] = -0.5-i;
+					vertex_buffer[current_face*12+7] = 0.5-j;
+					vertex_buffer[current_face*12+8] = -0.5-k;
+					vertex_buffer[current_face*12+9] = 0.5-i;
+					vertex_buffer[current_face*12+10] = 0.5-j;
+					vertex_buffer[current_face*12+11] = -0.5-k;
+					current_face++;
+				}
+
+				if(check_block_exists(i-1,j,k) == false)
+				{
+					vertex_buffer[current_face*12] = -0.5-i;
+					vertex_buffer[current_face*12+1] = 0.5-j;
+					vertex_buffer[current_face*12+2] = 0.5-k;
+					vertex_buffer[current_face*12+3] = -0.5-i;
+					vertex_buffer[current_face*12+4] = -0.5-j;
+					vertex_buffer[current_face*12+5] = 0.5-k;
+					vertex_buffer[current_face*12+6] = -0.5-i;
+					vertex_buffer[current_face*12+7] = -0.5-j;
+					vertex_buffer[current_face*12+8] = -0.5-k;
+					vertex_buffer[current_face*12+9] = -0.5-i;
+					vertex_buffer[current_face*12+10] = 0.5-j;
+					vertex_buffer[current_face*12+11] = -0.5-k;
+					current_face++;
+				}
+
+				if(check_block_exists(i+1,j,k) == false)
+				{
+					vertex_buffer[current_face*12] = 0.5-i;
+					vertex_buffer[current_face*12+1] = 0.5-j;
+					vertex_buffer[current_face*12+2] = 0.5-k;
+					vertex_buffer[current_face*12+3] = 0.5-i;
+					vertex_buffer[current_face*12+4] = -0.5-j;
+					vertex_buffer[current_face*12+5] = 0.5-k;
+					vertex_buffer[current_face*12+6] = 0.5-i;
+					vertex_buffer[current_face*12+7] = -0.5-j;
+					vertex_buffer[current_face*12+8] = -0.5-k;
+					vertex_buffer[current_face*12+9] = 0.5-i;
+					vertex_buffer[current_face*12+10] = 0.5-j;
+					vertex_buffer[current_face*12+11] = -0.5-k;
+					current_face++;
+				}
+			}
+		}
+	}
+	return current_face;
 }
 
 void draw_cube(int i, int j, int k)
@@ -194,6 +374,8 @@ int main(int argc, char *argv[])
 	SDL_Event event; 
 	bool done = 0;
 
+	printf("total faces drawn: %d\n", get_total_faces());
+
 	int i,j,k;
 	float rot_amount;
 	
@@ -219,6 +401,19 @@ int main(int argc, char *argv[])
 
 	glEndList();
 
+	//Initialise VBO - do only once, at start of program
+	//Create a variable to hold the VBO identifier
+	GLuint triangleVBO;
+
+	float *verticies;
+	verticies = new float[get_total_faces()*4*3];
+	int num_faces_populated;
+	num_faces_populated = populate_verticies(verticies);
+
+	printf("Number of faces populated: %d\n", num_faces_populated);
+
+	glShadeModel(GL_FLAT);
+
 	while(!done)
 	{
 		while(SDL_PollEvent(&event))
@@ -237,17 +432,11 @@ int main(int argc, char *argv[])
 		glClearColor(0,0,0,1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		gluLookAt(0.0f,5.0f, 5.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+		gluLookAt(0.0f,10.0f, 10.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
 		rot_amount = SDL_GetTicks()/10;
-
-		//Initialise VBO - do only once, at start of program
-		//Create a variable to hold the VBO identifier
-		GLuint triangleVBO;
  
 		//Vertices of a triangle (counter-clockwise winding)
-		float data[] = {1.0, 0.0, 1.0, 0.0, 0.0, -1.0, -1.0, 0.0, 1.0};
-		//try float data[] = {0.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, -1.0, 0.0}; if the above doesn't work.
  
 		//Create a new VBO and use the variable id to store the VBO id
 		glGenBuffers(1, &triangleVBO);
@@ -256,7 +445,7 @@ int main(int argc, char *argv[])
 		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
  
 		//Upload vertex data to the video device
-		glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_faces_populated*4*3, verticies, GL_STATIC_DRAW);
  
 		//Make the new VBO active. Repeat here incase changed since initialisation
 		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
@@ -268,11 +457,10 @@ int main(int argc, char *argv[])
 		//Establish array contains vertices (not normals, colours, texture coords etc)
 		glEnableClientState(GL_VERTEX_ARRAY);
  
+
+		glRotatef(rot_amount,1,1,0);
 		//Actually draw the triangle, giving the number of vertices provided
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(data) / sizeof(float) / 3);
- 
-		//Force display to be drawn now
-		glFlush();
+		glDrawArrays(GL_QUADS, 0, num_faces_populated*4);
 
 		SDL_GL_SwapWindow(window);
     
