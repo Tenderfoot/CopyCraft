@@ -15,7 +15,7 @@
 
 #include "common.h"
 
-#define WORLD_SIZE 8
+#define WORLD_SIZE 32
 
 t_levelBlock world[WORLD_SIZE][WORLD_SIZE][WORLD_SIZE];
 t_pos camera_pos;
@@ -129,8 +129,12 @@ int get_total_faces()
 		for(j=0; j<WORLD_SIZE; j++)
 		{
 			for(k=0; k<WORLD_SIZE; k++)
-			{
-				total+=get_number_of_faces(i,j,k);
+			{	
+				// block is only drawn if it exists
+				if(world[i][j][k].type > 0)
+				{
+					total+=get_number_of_faces(i,j,k);
+				}
 			}
 		}
 	}
