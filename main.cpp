@@ -17,7 +17,7 @@
 
 #include "common.h"
 
-#define WORLD_SIZE 8
+#define WORLD_SIZE 32
 
 t_levelBlock world[WORLD_SIZE][WORLD_SIZE][WORLD_SIZE];
 t_pos camera_pos;
@@ -40,10 +40,14 @@ void init()
 		"data/dirt.png",
 		SOIL_LOAD_AUTO,
 		SOIL_CREATE_NEW_ID,
-		NULL 
+		SOIL_FLAG_MIPMAPS 
 	);
 
 	glBindTexture(GL_TEXTURE_2D, texture[0]);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 	srand (time(NULL));
 	int block_type = 0;
@@ -644,7 +648,7 @@ int main(int argc, char *argv[])
 		glClearColor(0,0,0,1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		gluLookAt(0.0f,0.0f, 50.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+		gluLookAt(0.0f,0.0f, 100.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
 		rot_amount = SDL_GetTicks()/10;
 
