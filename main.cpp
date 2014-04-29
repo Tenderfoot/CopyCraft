@@ -595,8 +595,6 @@ int main(int argc, char *argv[])
 
 	printf("Number of faces populated: %d\n", num_faces_populated);
 
-
-
 	//Create a new VBO and use the variable id to store the VBO id
 	glGenBuffers(3, &triangleVBO[0]);
 
@@ -625,7 +623,6 @@ int main(int argc, char *argv[])
 	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[2]);
 	glTexCoordPointer(2, GL_FLOAT, 0, 0);
  
-	//Establish array contains vertices (not normals, colours, texture coords etc)
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY); 
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -638,22 +635,17 @@ int main(int argc, char *argv[])
 				done = 1;
 		}
 		
-		// render scene
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective ( 80, ( float )1024 / ( float ) 768, 1.0, 100000.0 );
-		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
 		glClearColor(0,0,0,1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		gluLookAt(0.0f,0.0f, 100.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+		gluLookAt(16.0f,40.0f, 20.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
 		rot_amount = SDL_GetTicks()/10;
 
 		glPushMatrix();
-			glRotatef(rot_amount,1,1,0);
+			//glRotatef(rot_amount,0,1,0);
 			//Actually draw the triangle, giving the number of vertices provided
 			glDrawArrays(GL_QUADS, 0, num_faces_populated*4);
 		glPopMatrix();
