@@ -17,19 +17,15 @@
 
 #include "common.h"
 
-#define WORLD_SIZE 32
+#define WORLD_SIZE 8
 
 t_levelBlock world[WORLD_SIZE][WORLD_SIZE][WORLD_SIZE];
 t_pos camera_pos;
 
-// load in a texture
-// draw on normal
-// load in texcoords
-// texture every block the same
 // load in a second texture
 // texture the two block types seperately
 
-GLuint texture;
+GLuint texture[2];
 
 void init()
 {
@@ -39,7 +35,7 @@ void init()
 	camera_pos.y = 0;
 	camera_pos.z = 5;
 
-	texture =  SOIL_load_OGL_texture
+	texture[0] =  SOIL_load_OGL_texture
 	(
 		"data/dirt.png",
 		SOIL_LOAD_AUTO,
@@ -47,7 +43,7 @@ void init()
 		NULL 
 	);
 
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_2D, texture[0]);
 
 	srand (time(NULL));
 	int block_type = 0;
@@ -170,11 +166,33 @@ int populate_verticies(float *vertex_buffer, float *color_buffer, float *texcoor
 	brown[0] = 1;
 	brown[1] = 1;
 	brown[2] = 1;
+	current_color = brown;
 
 	float green[3];
 	green[0] = 1;
 	green[1] = 1;
 	green[2] = 1;
+
+	float *current_texcoords;
+	float dirt_texcoords[8];
+	dirt_texcoords[0] = 0.0f;
+	dirt_texcoords[1] = 0.0f;
+	dirt_texcoords[2] = 0.5f;
+	dirt_texcoords[3] = 0.0f;
+	dirt_texcoords[4] = 0.5f;
+	dirt_texcoords[5] = 1.0f;
+	dirt_texcoords[6] = 0.0f;
+	dirt_texcoords[7] = 1.0f;
+	float grass_texcoords[8];
+	grass_texcoords[0] = 0.5f;
+	grass_texcoords[1] = 0.0f;
+	grass_texcoords[2] = 1.0f;
+	grass_texcoords[3] = 0.0f;
+	grass_texcoords[4] = 1.0f;
+	grass_texcoords[5] = 1.0f;
+	grass_texcoords[6] = 0.5f;
+	grass_texcoords[7] = 1.0f;
+
 
 	for(i=0; i<WORLD_SIZE; i++)
 	{
@@ -185,20 +203,20 @@ int populate_verticies(float *vertex_buffer, float *color_buffer, float *texcoor
 				if(world[i][j][k].type > 0)
 				{
 					if(world[i][j][k].type == 1)
-						current_color = brown;
+						current_texcoords = dirt_texcoords;
 					else
-						current_color = green;
+						current_texcoords = grass_texcoords;
 
 					if(check_block_exists(i,j,k+1) == false)
 					{
-						texcoord_buffer[current_face*8] = 0.0;
-						texcoord_buffer[current_face*8+1] = 0.0;
-						texcoord_buffer[current_face*8+2] = 1.0;
-						texcoord_buffer[current_face*8+3] = 0.0;
-						texcoord_buffer[current_face*8+4] = 1.0;
-						texcoord_buffer[current_face*8+5] = 1.0;
-						texcoord_buffer[current_face*8+6] = 0.0;
-						texcoord_buffer[current_face*8+7] = 1.0;
+						texcoord_buffer[current_face*8] = current_texcoords[0];
+						texcoord_buffer[current_face*8+1] = current_texcoords[1];
+						texcoord_buffer[current_face*8+2] = current_texcoords[2];
+						texcoord_buffer[current_face*8+3] = current_texcoords[3];
+						texcoord_buffer[current_face*8+4] = current_texcoords[4];
+						texcoord_buffer[current_face*8+5] = current_texcoords[5];
+						texcoord_buffer[current_face*8+6] = current_texcoords[6];
+						texcoord_buffer[current_face*8+7] = current_texcoords[7];
 
 						color_buffer[current_face*12] = current_color[0];
 						color_buffer[current_face*12+1] = current_color[1];
@@ -230,14 +248,14 @@ int populate_verticies(float *vertex_buffer, float *color_buffer, float *texcoor
 
 					if(check_block_exists(i,j,k-1) == false)
 					{
-						texcoord_buffer[current_face*8] = 0.0;
-						texcoord_buffer[current_face*8+1] = 0.0;
-						texcoord_buffer[current_face*8+2] = 1.0;
-						texcoord_buffer[current_face*8+3] = 0.0;
-						texcoord_buffer[current_face*8+4] = 1.0;
-						texcoord_buffer[current_face*8+5] = 1.0;
-						texcoord_buffer[current_face*8+6] = 0.0;
-						texcoord_buffer[current_face*8+7] = 1.0;
+						texcoord_buffer[current_face*8] = current_texcoords[0];
+						texcoord_buffer[current_face*8+1] = current_texcoords[1];
+						texcoord_buffer[current_face*8+2] = current_texcoords[2];
+						texcoord_buffer[current_face*8+3] = current_texcoords[3];
+						texcoord_buffer[current_face*8+4] = current_texcoords[4];
+						texcoord_buffer[current_face*8+5] = current_texcoords[5];
+						texcoord_buffer[current_face*8+6] = current_texcoords[6];
+						texcoord_buffer[current_face*8+7] = current_texcoords[7];
 
 						color_buffer[current_face*12] = current_color[0];
 						color_buffer[current_face*12+1] = current_color[1];
@@ -270,14 +288,14 @@ int populate_verticies(float *vertex_buffer, float *color_buffer, float *texcoor
 					if(check_block_exists(i,j-1,k) == false)
 					{
 
-						texcoord_buffer[current_face*8] = 0.0;
-						texcoord_buffer[current_face*8+1] = 0.0;
-						texcoord_buffer[current_face*8+2] = 1.0;
-						texcoord_buffer[current_face*8+3] = 0.0;
-						texcoord_buffer[current_face*8+4] = 1.0;
-						texcoord_buffer[current_face*8+5] = 1.0;
-						texcoord_buffer[current_face*8+6] = 0.0;
-						texcoord_buffer[current_face*8+7] = 1.0;
+						texcoord_buffer[current_face*8] = current_texcoords[0];
+						texcoord_buffer[current_face*8+1] = current_texcoords[1];
+						texcoord_buffer[current_face*8+2] = current_texcoords[2];
+						texcoord_buffer[current_face*8+3] = current_texcoords[3];
+						texcoord_buffer[current_face*8+4] = current_texcoords[4];
+						texcoord_buffer[current_face*8+5] = current_texcoords[5];
+						texcoord_buffer[current_face*8+6] = current_texcoords[6];
+						texcoord_buffer[current_face*8+7] = current_texcoords[7];
 
 						color_buffer[current_face*12] = current_color[0];
 						color_buffer[current_face*12+1] = current_color[1];
@@ -310,14 +328,14 @@ int populate_verticies(float *vertex_buffer, float *color_buffer, float *texcoor
 					if(check_block_exists(i,j+1,k) == false)
 					{
 
-						texcoord_buffer[current_face*8] = 0.0;
-						texcoord_buffer[current_face*8+1] = 0.0;
-						texcoord_buffer[current_face*8+2] = 1.0;
-						texcoord_buffer[current_face*8+3] = 0.0;
-						texcoord_buffer[current_face*8+4] = 1.0;
-						texcoord_buffer[current_face*8+5] = 1.0;
-						texcoord_buffer[current_face*8+6] = 0.0;
-						texcoord_buffer[current_face*8+7] = 1.0;
+						texcoord_buffer[current_face*8] = current_texcoords[0];
+						texcoord_buffer[current_face*8+1] = current_texcoords[1];
+						texcoord_buffer[current_face*8+2] = current_texcoords[2];
+						texcoord_buffer[current_face*8+3] = current_texcoords[3];
+						texcoord_buffer[current_face*8+4] = current_texcoords[4];
+						texcoord_buffer[current_face*8+5] = current_texcoords[5];
+						texcoord_buffer[current_face*8+6] = current_texcoords[6];
+						texcoord_buffer[current_face*8+7] = current_texcoords[7];
 
 						color_buffer[current_face*12] = current_color[0];
 						color_buffer[current_face*12+1] = current_color[1];
@@ -349,14 +367,14 @@ int populate_verticies(float *vertex_buffer, float *color_buffer, float *texcoor
 
 					if(check_block_exists(i-1,j,k) == false)
 					{
-						texcoord_buffer[current_face*8] = 0.0;
-						texcoord_buffer[current_face*8+1] = 0.0;
-						texcoord_buffer[current_face*8+2] = 1.0;
-						texcoord_buffer[current_face*8+3] = 0.0;
-						texcoord_buffer[current_face*8+4] = 1.0;
-						texcoord_buffer[current_face*8+5] = 1.0;
-						texcoord_buffer[current_face*8+6] = 0.0;
-						texcoord_buffer[current_face*8+7] = 1.0;
+						texcoord_buffer[current_face*8] = current_texcoords[0];
+						texcoord_buffer[current_face*8+1] = current_texcoords[1];
+						texcoord_buffer[current_face*8+2] = current_texcoords[2];
+						texcoord_buffer[current_face*8+3] = current_texcoords[3];
+						texcoord_buffer[current_face*8+4] = current_texcoords[4];
+						texcoord_buffer[current_face*8+5] = current_texcoords[5];
+						texcoord_buffer[current_face*8+6] = current_texcoords[6];
+						texcoord_buffer[current_face*8+7] = current_texcoords[7];
 
 						color_buffer[current_face*12] = current_color[0];
 						color_buffer[current_face*12+1] = current_color[1];
@@ -389,14 +407,14 @@ int populate_verticies(float *vertex_buffer, float *color_buffer, float *texcoor
 					if(check_block_exists(i+1,j,k) == false)
 					{
 
-						texcoord_buffer[current_face*8] = 0.0;
-						texcoord_buffer[current_face*8+1] = 0.0;
-						texcoord_buffer[current_face*8+2] = 1.0;
-						texcoord_buffer[current_face*8+3] = 0.0;
-						texcoord_buffer[current_face*8+4] = 1.0;
-						texcoord_buffer[current_face*8+5] = 1.0;
-						texcoord_buffer[current_face*8+6] = 0.0;
-						texcoord_buffer[current_face*8+7] = 1.0;
+						texcoord_buffer[current_face*8] = current_texcoords[0];
+						texcoord_buffer[current_face*8+1] = current_texcoords[1];
+						texcoord_buffer[current_face*8+2] = current_texcoords[2];
+						texcoord_buffer[current_face*8+3] = current_texcoords[3];
+						texcoord_buffer[current_face*8+4] = current_texcoords[4];
+						texcoord_buffer[current_face*8+5] = current_texcoords[5];
+						texcoord_buffer[current_face*8+6] = current_texcoords[6];
+						texcoord_buffer[current_face*8+7] = current_texcoords[7];
 
 						color_buffer[current_face*12] = current_color[0];
 						color_buffer[current_face*12+1] = current_color[1];
@@ -593,6 +611,21 @@ int main(int argc, char *argv[])
 	//Upload vertex data to the video device
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_faces_populated*4*2, texcoords, GL_STATIC_DRAW);
 
+	//Make the new VBO active. Repeat here incase changed since initialisation
+	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[0]);
+	glVertexPointer(3, GL_FLOAT, 0, NULL);
+
+	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[1]);
+	glColorPointer(3, GL_FLOAT, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[2]);
+	glTexCoordPointer(2, GL_FLOAT, 0, 0);
+ 
+	//Establish array contains vertices (not normals, colours, texture coords etc)
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY); 
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
 	while(!done)
 	{
 		while(SDL_PollEvent(&event))
@@ -614,21 +647,6 @@ int main(int argc, char *argv[])
 		gluLookAt(0.0f,0.0f, 50.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
 		rot_amount = SDL_GetTicks()/10;
- 
-		//Make the new VBO active. Repeat here incase changed since initialisation
-		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[0]);
-		glVertexPointer(3, GL_FLOAT, 0, NULL);
-
-		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[1]);
-		glColorPointer(3, GL_FLOAT, 0, 0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[2]);
-		glTexCoordPointer(2, GL_FLOAT, 0, 0);
- 
-		//Establish array contains vertices (not normals, colours, texture coords etc)
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY); 
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 		glPushMatrix();
 			glRotatef(rot_amount,1,1,0);
