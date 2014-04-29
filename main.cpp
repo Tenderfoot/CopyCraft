@@ -15,7 +15,7 @@
 
 #include "common.h"
 
-#define WORLD_SIZE 32
+#define WORLD_SIZE 8
 
 t_levelBlock world[WORLD_SIZE][WORLD_SIZE][WORLD_SIZE];
 t_pos camera_pos;
@@ -41,7 +41,7 @@ void init()
 			for(k=0; k<WORLD_SIZE; k++)
 			{
 				block_type =  rand() % 50;
-				if(block_type>30)	
+				if(block_type>10)	
 					world[i][j][k].type = DIRT;
 				else
 					world[i][j][k].type = NO_BLOCK;
@@ -141,11 +141,22 @@ int get_total_faces()
 	return total;
 }
 
-int populate_verticies(float *vertex_buffer)
+int populate_verticies(float *vertex_buffer, float *color_buffer)
 {
 	int i,j,k;
 	int total=0;
 	int current_face = 0;
+
+	float *current_color;
+	float brown[3];
+	brown[0] = 1;
+	brown[1] = 0.5;
+	brown[2] = 0.1;
+
+	float green[3];
+	green[0] = 0;
+	green[1] = 0.5;
+	green[2] = 0;
 
 	for(i=0; i<WORLD_SIZE; i++)
 	{
@@ -155,8 +166,26 @@ int populate_verticies(float *vertex_buffer)
 			{
 				if(world[i][j][k].type > 0)
 				{
+					if(world[i][j][k].type == 1)
+						current_color = brown;
+					else
+						current_color = green;
+
 					if(check_block_exists(i,j,k+1) == false)
 					{
+						color_buffer[current_face*12] = current_color[0];
+						color_buffer[current_face*12+1] = current_color[1];
+						color_buffer[current_face*12+2] = current_color[2];
+						color_buffer[current_face*12+3] = current_color[0];
+						color_buffer[current_face*12+4] = current_color[1];
+						color_buffer[current_face*12+5] = current_color[2];
+						color_buffer[current_face*12+6] = current_color[0];
+						color_buffer[current_face*12+7] = current_color[1];
+						color_buffer[current_face*12+8] = current_color[2];
+						color_buffer[current_face*12+9] = current_color[0];
+						color_buffer[current_face*12+10] = current_color[1];
+						color_buffer[current_face*12+11] = current_color[2];
+
 						vertex_buffer[current_face*12] = 0.5+i;
 						vertex_buffer[current_face*12+1] = 0.5+j;
 						vertex_buffer[current_face*12+2] = 0.5+k;
@@ -174,6 +203,19 @@ int populate_verticies(float *vertex_buffer)
 
 					if(check_block_exists(i,j,k-1) == false)
 					{
+						color_buffer[current_face*12] = current_color[0];
+						color_buffer[current_face*12+1] = current_color[1];
+						color_buffer[current_face*12+2] = current_color[2];
+						color_buffer[current_face*12+3] = current_color[0];
+						color_buffer[current_face*12+4] = current_color[1];
+						color_buffer[current_face*12+5] = current_color[2];
+						color_buffer[current_face*12+6] = current_color[0];
+						color_buffer[current_face*12+7] = current_color[1];
+						color_buffer[current_face*12+8] = current_color[2];
+						color_buffer[current_face*12+9] = current_color[0];
+						color_buffer[current_face*12+10] = current_color[1];
+						color_buffer[current_face*12+11] = current_color[2];
+
 						vertex_buffer[current_face*12] = 0.5+i;
 						vertex_buffer[current_face*12+1] = 0.5+j;
 						vertex_buffer[current_face*12+2] = -0.5+k;
@@ -191,6 +233,19 @@ int populate_verticies(float *vertex_buffer)
 
 					if(check_block_exists(i,j-1,k) == false)
 					{
+						color_buffer[current_face*12] = current_color[0];
+						color_buffer[current_face*12+1] = current_color[1];
+						color_buffer[current_face*12+2] = current_color[2];
+						color_buffer[current_face*12+3] = current_color[0];
+						color_buffer[current_face*12+4] = current_color[1];
+						color_buffer[current_face*12+5] = current_color[2];
+						color_buffer[current_face*12+6] = current_color[0];
+						color_buffer[current_face*12+7] = current_color[1];
+						color_buffer[current_face*12+8] = current_color[2];
+						color_buffer[current_face*12+9] = current_color[0];
+						color_buffer[current_face*12+10] = current_color[1];
+						color_buffer[current_face*12+11] = current_color[2];
+
 						vertex_buffer[current_face*12] = 0.5+i;
 						vertex_buffer[current_face*12+1] = -0.5+j;
 						vertex_buffer[current_face*12+2] = 0.5+k;
@@ -208,6 +263,18 @@ int populate_verticies(float *vertex_buffer)
 
 					if(check_block_exists(i,j+1,k) == false)
 					{
+						color_buffer[current_face*12] = current_color[0];
+						color_buffer[current_face*12+1] = current_color[1];
+						color_buffer[current_face*12+2] = current_color[2];
+						color_buffer[current_face*12+3] = current_color[0];
+						color_buffer[current_face*12+4] = current_color[1];
+						color_buffer[current_face*12+5] = current_color[2];
+						color_buffer[current_face*12+6] = current_color[0];
+						color_buffer[current_face*12+7] = current_color[1];
+						color_buffer[current_face*12+8] = current_color[2];
+						color_buffer[current_face*12+9] = current_color[0];
+						color_buffer[current_face*12+10] = current_color[1];
+						color_buffer[current_face*12+11] = current_color[2];
 
 						vertex_buffer[current_face*12] = 0.5+i;
 						vertex_buffer[current_face*12+1] = 0.5+j;
@@ -226,6 +293,19 @@ int populate_verticies(float *vertex_buffer)
 
 					if(check_block_exists(i-1,j,k) == false)
 					{
+						color_buffer[current_face*12] = current_color[0];
+						color_buffer[current_face*12+1] = current_color[1];
+						color_buffer[current_face*12+2] = current_color[2];
+						color_buffer[current_face*12+3] = current_color[0];
+						color_buffer[current_face*12+4] = current_color[1];
+						color_buffer[current_face*12+5] = current_color[2];
+						color_buffer[current_face*12+6] = current_color[0];
+						color_buffer[current_face*12+7] = current_color[1];
+						color_buffer[current_face*12+8] = current_color[2];
+						color_buffer[current_face*12+9] = current_color[0];
+						color_buffer[current_face*12+10] = current_color[1];
+						color_buffer[current_face*12+11] = current_color[2];
+
 						vertex_buffer[current_face*12] = -0.5+i;
 						vertex_buffer[current_face*12+1] = 0.5+j;
 						vertex_buffer[current_face*12+2] = 0.5+k;
@@ -243,6 +323,19 @@ int populate_verticies(float *vertex_buffer)
 
 					if(check_block_exists(i+1,j,k) == false)
 					{
+						color_buffer[current_face*12] = current_color[0];
+						color_buffer[current_face*12+1] = current_color[1];
+						color_buffer[current_face*12+2] = current_color[2];
+						color_buffer[current_face*12+3] = current_color[0];
+						color_buffer[current_face*12+4] = current_color[1];
+						color_buffer[current_face*12+5] = current_color[2];
+						color_buffer[current_face*12+6] = current_color[0];
+						color_buffer[current_face*12+7] = current_color[1];
+						color_buffer[current_face*12+8] = current_color[2];
+						color_buffer[current_face*12+9] = current_color[0];
+						color_buffer[current_face*12+10] = current_color[1];
+						color_buffer[current_face*12+11] = current_color[2];
+
 						vertex_buffer[current_face*12] = 0.5+i;
 						vertex_buffer[current_face*12+1] = 0.5+j;
 						vertex_buffer[current_face*12+2] = 0.5+k;
@@ -264,6 +357,9 @@ int populate_verticies(float *vertex_buffer)
 	return current_face;
 }
 
+
+// This isn't used
+// drawing in immediate mode
 void draw_cube(int i, int j, int k)
 {
 	glBindTexture(GL_TEXTURE_2D, NULL);
@@ -388,21 +484,29 @@ int main(int argc, char *argv[])
 
 	//Initialise VBO - do only once, at start of program
 	//Create a variable to hold the VBO identifier
-	GLuint triangleVBO;
+	GLuint triangleVBO[2];
 
 	float *verticies;
+	float *colors;
 	verticies = new float[get_total_faces()*4*3];
+	colors = new float[get_total_faces()*4*3];
+
 	int num_faces_populated;
-	num_faces_populated = populate_verticies(verticies);
+	num_faces_populated = populate_verticies(verticies, colors);
 
 	printf("Number of faces populated: %d\n", num_faces_populated);
 
 	//Create a new VBO and use the variable id to store the VBO id
-	glGenBuffers(1, &triangleVBO);
+	glGenBuffers(2, &triangleVBO[0]);
 	//Make the new VBO active
-	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[0]);
 	//Upload vertex data to the video device
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_faces_populated*4*3, verticies, GL_STATIC_DRAW);
+
+	//Make the new VBO active
+	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[1]);
+	//Upload vertex data to the video device
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_faces_populated*4*3, colors, GL_STATIC_DRAW);
 
 	while(!done)
 	{
@@ -427,24 +531,22 @@ int main(int argc, char *argv[])
 		rot_amount = SDL_GetTicks()/10;
  
 		//Make the new VBO active. Repeat here incase changed since initialisation
-		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO);
- 
-		//Draw Triangle from VBO - do each time window, view point or data changes
-		//Establish its 3 coordinates per vertex with zero stride in this array; necessary here
+		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[0]);
 		glVertexPointer(3, GL_FLOAT, 0, NULL);
+		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[1]);
+		glColorPointer(3, GL_FLOAT, 0, 0);
  
 		//Establish array contains vertices (not normals, colours, texture coords etc)
 		glEnableClientState(GL_VERTEX_ARRAY);
- 
+		glEnableClientState(GL_COLOR_ARRAY); 
+
 		glPushMatrix();
 			glRotatef(rot_amount,1,1,0);
 			//Actually draw the triangle, giving the number of vertices provided
 			glDrawArrays(GL_QUADS, 0, num_faces_populated*4);
 		glPopMatrix();
 
-
 		SDL_GL_SwapWindow(window);
-    
 	} 
 
 	SDL_GL_DeleteContext(glcontext);  
