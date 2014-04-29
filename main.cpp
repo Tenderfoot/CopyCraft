@@ -3,6 +3,7 @@
 #pragma comment(lib, "GLU32")
 #pragma comment(lib, "OpenGL32")
 #pragma comment(lib, "glew32")
+#pragma comment(lib, "SOIL")
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,16 +13,23 @@
 #include <SDL_opengl.h>
 #include <GL/GL.h>
 #include <gl/GLU.h>
+#include <SOIL.h>
 
 #include "common.h"
 
-#define WORLD_SIZE 8
+#define WORLD_SIZE 32
 
 t_levelBlock world[WORLD_SIZE][WORLD_SIZE][WORLD_SIZE];
 t_pos camera_pos;
 
-// first get the size of the vertex array
-// then create and populate it
+// load in a texture
+// draw on normal
+// load in texcoords
+// texture every block the same
+// load in a second texture
+// texture the two block types seperately
+
+GLuint texture;
 
 void init()
 {
@@ -30,6 +38,16 @@ void init()
 	camera_pos.x = 0;
 	camera_pos.y = 0;
 	camera_pos.z = 5;
+
+	texture =  SOIL_load_OGL_texture
+	(
+		"data/dirt.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		NULL 
+	);
+
+	glBindTexture(GL_TEXTURE_2D, texture);
 
 	srand (time(NULL));
 	int block_type = 0;
@@ -141,7 +159,7 @@ int get_total_faces()
 	return total;
 }
 
-int populate_verticies(float *vertex_buffer, float *color_buffer)
+int populate_verticies(float *vertex_buffer, float *color_buffer, float *texcoord_buffer)
 {
 	int i,j,k;
 	int total=0;
@@ -150,13 +168,13 @@ int populate_verticies(float *vertex_buffer, float *color_buffer)
 	float *current_color;
 	float brown[3];
 	brown[0] = 1;
-	brown[1] = 0.5;
-	brown[2] = 0.1;
+	brown[1] = 1;
+	brown[2] = 1;
 
 	float green[3];
-	green[0] = 0;
-	green[1] = 0.5;
-	green[2] = 0;
+	green[0] = 1;
+	green[1] = 1;
+	green[2] = 1;
 
 	for(i=0; i<WORLD_SIZE; i++)
 	{
@@ -173,6 +191,15 @@ int populate_verticies(float *vertex_buffer, float *color_buffer)
 
 					if(check_block_exists(i,j,k+1) == false)
 					{
+						texcoord_buffer[current_face*8] = 0.0;
+						texcoord_buffer[current_face*8+1] = 0.0;
+						texcoord_buffer[current_face*8+2] = 1.0;
+						texcoord_buffer[current_face*8+3] = 0.0;
+						texcoord_buffer[current_face*8+4] = 1.0;
+						texcoord_buffer[current_face*8+5] = 1.0;
+						texcoord_buffer[current_face*8+6] = 0.0;
+						texcoord_buffer[current_face*8+7] = 1.0;
+
 						color_buffer[current_face*12] = current_color[0];
 						color_buffer[current_face*12+1] = current_color[1];
 						color_buffer[current_face*12+2] = current_color[2];
@@ -203,6 +230,15 @@ int populate_verticies(float *vertex_buffer, float *color_buffer)
 
 					if(check_block_exists(i,j,k-1) == false)
 					{
+						texcoord_buffer[current_face*8] = 0.0;
+						texcoord_buffer[current_face*8+1] = 0.0;
+						texcoord_buffer[current_face*8+2] = 1.0;
+						texcoord_buffer[current_face*8+3] = 0.0;
+						texcoord_buffer[current_face*8+4] = 1.0;
+						texcoord_buffer[current_face*8+5] = 1.0;
+						texcoord_buffer[current_face*8+6] = 0.0;
+						texcoord_buffer[current_face*8+7] = 1.0;
+
 						color_buffer[current_face*12] = current_color[0];
 						color_buffer[current_face*12+1] = current_color[1];
 						color_buffer[current_face*12+2] = current_color[2];
@@ -233,6 +269,16 @@ int populate_verticies(float *vertex_buffer, float *color_buffer)
 
 					if(check_block_exists(i,j-1,k) == false)
 					{
+
+						texcoord_buffer[current_face*8] = 0.0;
+						texcoord_buffer[current_face*8+1] = 0.0;
+						texcoord_buffer[current_face*8+2] = 1.0;
+						texcoord_buffer[current_face*8+3] = 0.0;
+						texcoord_buffer[current_face*8+4] = 1.0;
+						texcoord_buffer[current_face*8+5] = 1.0;
+						texcoord_buffer[current_face*8+6] = 0.0;
+						texcoord_buffer[current_face*8+7] = 1.0;
+
 						color_buffer[current_face*12] = current_color[0];
 						color_buffer[current_face*12+1] = current_color[1];
 						color_buffer[current_face*12+2] = current_color[2];
@@ -263,6 +309,16 @@ int populate_verticies(float *vertex_buffer, float *color_buffer)
 
 					if(check_block_exists(i,j+1,k) == false)
 					{
+
+						texcoord_buffer[current_face*8] = 0.0;
+						texcoord_buffer[current_face*8+1] = 0.0;
+						texcoord_buffer[current_face*8+2] = 1.0;
+						texcoord_buffer[current_face*8+3] = 0.0;
+						texcoord_buffer[current_face*8+4] = 1.0;
+						texcoord_buffer[current_face*8+5] = 1.0;
+						texcoord_buffer[current_face*8+6] = 0.0;
+						texcoord_buffer[current_face*8+7] = 1.0;
+
 						color_buffer[current_face*12] = current_color[0];
 						color_buffer[current_face*12+1] = current_color[1];
 						color_buffer[current_face*12+2] = current_color[2];
@@ -293,6 +349,15 @@ int populate_verticies(float *vertex_buffer, float *color_buffer)
 
 					if(check_block_exists(i-1,j,k) == false)
 					{
+						texcoord_buffer[current_face*8] = 0.0;
+						texcoord_buffer[current_face*8+1] = 0.0;
+						texcoord_buffer[current_face*8+2] = 1.0;
+						texcoord_buffer[current_face*8+3] = 0.0;
+						texcoord_buffer[current_face*8+4] = 1.0;
+						texcoord_buffer[current_face*8+5] = 1.0;
+						texcoord_buffer[current_face*8+6] = 0.0;
+						texcoord_buffer[current_face*8+7] = 1.0;
+
 						color_buffer[current_face*12] = current_color[0];
 						color_buffer[current_face*12+1] = current_color[1];
 						color_buffer[current_face*12+2] = current_color[2];
@@ -323,6 +388,16 @@ int populate_verticies(float *vertex_buffer, float *color_buffer)
 
 					if(check_block_exists(i+1,j,k) == false)
 					{
+
+						texcoord_buffer[current_face*8] = 0.0;
+						texcoord_buffer[current_face*8+1] = 0.0;
+						texcoord_buffer[current_face*8+2] = 1.0;
+						texcoord_buffer[current_face*8+3] = 0.0;
+						texcoord_buffer[current_face*8+4] = 1.0;
+						texcoord_buffer[current_face*8+5] = 1.0;
+						texcoord_buffer[current_face*8+6] = 0.0;
+						texcoord_buffer[current_face*8+7] = 1.0;
+
 						color_buffer[current_face*12] = current_color[0];
 						color_buffer[current_face*12+1] = current_color[1];
 						color_buffer[current_face*12+2] = current_color[2];
@@ -488,16 +563,21 @@ int main(int argc, char *argv[])
 
 	float *verticies;
 	float *colors;
+	float *texcoords;
 	verticies = new float[get_total_faces()*4*3];
 	colors = new float[get_total_faces()*4*3];
+	texcoords = new float[get_total_faces()*4*2];
 
 	int num_faces_populated;
-	num_faces_populated = populate_verticies(verticies, colors);
+	num_faces_populated = populate_verticies(verticies, colors, texcoords);
 
 	printf("Number of faces populated: %d\n", num_faces_populated);
 
+
+
 	//Create a new VBO and use the variable id to store the VBO id
-	glGenBuffers(2, &triangleVBO[0]);
+	glGenBuffers(3, &triangleVBO[0]);
+
 	//Make the new VBO active
 	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[0]);
 	//Upload vertex data to the video device
@@ -507,6 +587,11 @@ int main(int argc, char *argv[])
 	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[1]);
 	//Upload vertex data to the video device
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_faces_populated*4*3, colors, GL_STATIC_DRAW);
+
+	//Make the new VBO active
+	glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[2]);
+	//Upload vertex data to the video device
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*num_faces_populated*4*2, texcoords, GL_STATIC_DRAW);
 
 	while(!done)
 	{
@@ -533,12 +618,17 @@ int main(int argc, char *argv[])
 		//Make the new VBO active. Repeat here incase changed since initialisation
 		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[0]);
 		glVertexPointer(3, GL_FLOAT, 0, NULL);
+
 		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[1]);
 		glColorPointer(3, GL_FLOAT, 0, 0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, triangleVBO[2]);
+		glTexCoordPointer(2, GL_FLOAT, 0, 0);
  
 		//Establish array contains vertices (not normals, colours, texture coords etc)
 		glEnableClientState(GL_VERTEX_ARRAY);
 		glEnableClientState(GL_COLOR_ARRAY); 
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 		glPushMatrix();
 			glRotatef(rot_amount,1,1,0);
