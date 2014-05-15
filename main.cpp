@@ -630,6 +630,7 @@ int main(int argc, char *argv[])
 	while(!done)
 	{
 		while(SDL_PollEvent(&event))
+
 		{
 			if(event.type == SDL_QUIT || event.type == SDL_QUIT)
 				done = 1;
@@ -645,7 +646,7 @@ int main(int argc, char *argv[])
 		rot_amount = SDL_GetTicks()/10;
 
 		glPushMatrix();
-			//glRotatef(rot_amount,0,1,0);
+			glRotatef(rot_amount,0,1,0);
 			//Actually draw the triangle, giving the number of vertices provided
 			glDrawArrays(GL_QUADS, 0, num_faces_populated*4);
 		glPopMatrix();
